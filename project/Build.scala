@@ -289,10 +289,12 @@ object ScalikeJDBCProjects extends Build {
   }
 
   def _publishTo(v: String) = {
-    val nexus = "https://oss.sonatype.org/"
-    if (v.trim.endsWith("SNAPSHOT")) Some("snapshots" at nexus + "content/repositories/snapshots")
-    else Some("releases" at nexus + "service/local/staging/deploy/maven2")
+    val localMavenRepoPath = sys.env.getOrElse("LOCAL_MAVEN_REPO", {
+      throw new RuntimeException("specify LOCAL_MAVEN_REPO environment variable to publish.")
+    })
+    Some(Resolver.file("scalikejdbc", file(localMavenRepoPath))(Patterns(true, Resolver.mavenStyleBasePattern)))
   }
+
   val _resolvers = Seq(
     "typesafe repo" at "http://repo.typesafe.com/typesafe/releases",
     "sonatype releases" at "https://oss.sonatype.org/content/repositories/releases",
