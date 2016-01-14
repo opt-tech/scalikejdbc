@@ -137,9 +137,21 @@ object TypeBinder extends LowPriorityTypeBinderImplicits with UnixTimeInMillisCo
     }.orNull[java.util.Calendar])
   }
   implicit val jodaDateTime: TypeBinder[JodaDateTime] = option[java.sql.Timestamp].map(_.map(_.toJodaDateTime).orNull[JodaDateTime])
-  implicit val jodaLocalDate: TypeBinder[JodaLocalDate] = option[java.sql.Date].map(_.map(_.toJodaLocalDate).orNull[JodaLocalDate])
-  implicit val jodaLocalTime: TypeBinder[JodaLocalTime] = option[java.sql.Time].map(_.map(_.toJodaLocalTime).orNull[JodaLocalTime])
-  implicit val jpdaLocalDateTime: TypeBinder[JodaLocalDateTime] = option[java.sql.Timestamp].map(_.map(_.toJodaLocalDateTime).orNull)
+  implicit val jodaLocalDate: TypeBinder[JodaLocalDate] = TypeBinder[JodaLocalDate] { (rs, i) =>
+    rs.getDate(i).toJodaLocalDate
+  } { (rs, s) =>
+    rs.getDate(s).toJodaLocalDate
+  }
+  implicit val jodaLocalTime: TypeBinder[JodaLocalTime] = TypeBinder[JodaLocalTime] { (rs, i) =>
+    rs.getTime(i).toJodaLocalTime
+  } { (rs, s) =>
+    rs.getTime(s).toJodaLocalTime
+  }
+  implicit val jpdaLocalDateTime: TypeBinder[JodaLocalDateTime] = TypeBinder[JodaLocalDateTime] { (rs ,i) =>
+    rs.getTimestamp(i).toJodaLocalDateTime
+  } { (rs, s) =>
+    rs.getTimestamp(s).toJodaLocalDateTime
+  }
 
   implicit val url: TypeBinder[java.net.URL] = TypeBinder(_ getURL _)(_ getURL _)
 
