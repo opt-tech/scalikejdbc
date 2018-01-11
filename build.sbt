@@ -1,6 +1,6 @@
 import MimaSettings.mimaSettings
 
-lazy val _version = "3.1.0"
+lazy val _version = "3.1.0-fixBoolean"
 
 lazy val _organization = "org.scalikejdbc"
 
@@ -30,7 +30,9 @@ def gitHash: String = try {
 lazy val baseSettings = Seq(
   organization := _organization,
   version := _version,
-  publishTo := _publishTo(version.value),
+  //https://github.com/opt-tech/v7-apps/pull/5160が本家に取り込まれて修正版が出たら切り戻す,
+  //publishTo := _publishTo(version.value),
+  publishTo in ThisBuild := Some(Resolver.file("file",  new File( "/tmp/v7" ))),
   publishMavenStyle := true,
   resolvers ++= _resolvers,
   // https://github.com/sbt/sbt/issues/2217
@@ -39,7 +41,7 @@ lazy val baseSettings = Seq(
   incOptions := incOptions.value.withNameHashing(true),
   scalatestVersion := "3.0.3",
   specs2Version := "3.9.4",
-  //scalaVersion := "2.11.11",
+  scalaVersion := "2.11.12",
   javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-encoding", "UTF-8", "-Xlint:-options"),
   javacOptions in doc := Seq("-source", "1.8"),
   scalacOptions ++= _scalacOptions,
